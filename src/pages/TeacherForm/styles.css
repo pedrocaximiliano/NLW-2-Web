@@ -90,6 +90,8 @@
     cursor: pointer;
     font: 700 1.6rem Archivo;
     transition: background-color 0.s;
+    margin: 1.8rem;
+    margin-top: 1.6rem;
    }
 
    #page-teacher-form main fieldset legend button:hover{
@@ -100,7 +102,6 @@
     background: var(--color-secundary-dark);
     
    }
-
 
    @media (min-width: 700px) {
     #page-teacher-form {

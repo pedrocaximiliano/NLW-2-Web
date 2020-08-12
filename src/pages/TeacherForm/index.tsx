@@ -1,10 +1,12 @@
-import React, { useState, FormEvent } from 'react'
+import React, { useState, FormEvent, useCallback, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import PageHeader from '../../components/PageHeader';
 import Input from '../../components/Inputs';
 
 import Select from '../../components/Select';
+
+import ModalWarning from '../../components/ModalWarning';
 
 import './styles.css';
 
@@ -13,7 +15,7 @@ import TextArea from '../../components/TextArea';
 import api from '../../services/api';
 
 
-export default function TeacherForm() {
+const TeacherForm = (props: any) => {
 
     const history = useHistory();
 
@@ -22,6 +24,8 @@ export default function TeacherForm() {
     const [whatsApp, setwhatsApp] = useState('');
     const [bio, setBio] = useState('');
 
+    const [show, setShow] = useState(false);
+
     const [subject, setSubject] = useState('');
     const [cost, setCost] = useState('');
 
@@ -29,16 +33,18 @@ export default function TeacherForm() {
         { week_day: 0, from: '', to: '', }
     ]);
 
-    function addNewScheduleItem(value: number) {
+    function addNewScheduleItem() {
         if (scheduleItems.length < 3) {
             setScheduleItems([
-                ...scheduleItems, { week_day: 0, from: '', to: '' }
+                ...scheduleItems,
+                { week_day: 0, from: '', to: '' }
             ]);
         } else {
-            alert('maximo de 3 horarios por semana');
+            return setShow(true)
+            //alert('maximo de 3 horarios por semana');
         }
     };
-
+   
     function removeNewScheduleItem(position: number) {
         const array = [...scheduleItems];
         if (scheduleItems.length > 1) {
@@ -48,7 +54,7 @@ export default function TeacherForm() {
                 }
             })
         }
-
+        setShow(false)
         setScheduleItems(array)
     }
 
@@ -77,13 +83,17 @@ export default function TeacherForm() {
             }
             return scheduleItem;
         });
-
-
         setScheduleItems(updateArrayItems)
     }
 
     return (
         <div id="page-teacher-form" className="container">
+            {show && (
+                <ModalWarning 
+                    title="alerta mano" 
+                />
+            )}
+
             <PageHeader
                 description="O primeiro passo é preencher esse formulário de inscrição"
                 title="Que incrível você quer dar aulas">
@@ -133,10 +143,17 @@ export default function TeacherForm() {
                             value={subject}
                             onChange={(e) => { setSubject(e.target.value) }}
                             options={[
-                                { value: 'Cálculo', label: 'Cálculo' },
-                                { value: 'Lógica de programação', label: 'Lógica de programação' },
-                                { value: 'Algorítimo', label: 'Algorítimo' },
-                                { value: 'Redes', label: 'Redes' },
+                                { value: 'Artes', label: 'Artes' },
+                                { value: 'Biologia', label: 'Biologia' },
+                                { value: 'Ciências', label: 'Ciências' },
+                                { value: 'Educação Física', label: 'Educação Física' },
+                                { value: 'Física', label: 'Física' },
+                                { value: 'Geografia', label: 'Geografia' },
+                                { value: 'Química', label: 'Química' },
+                                { value: 'História', label: 'História' },
+                                { value: 'Matemática', label: 'Matemática' },
+                                { value: 'Português', label: 'Português' },
+                                { value: 'Inglês', label: 'Inglês' },
                             ]}
                         />
                         <Input
@@ -150,13 +167,14 @@ export default function TeacherForm() {
 
                     <fieldset>
                         <legend>Horários disponíveis
-                        <button type='button' onClick={() => addNewScheduleItem}>
-                                + novo horário
-                        </button>
+                        <button onClick={addNewScheduleItem} type="button">+ Novo Horário</button>
                         </legend>
+                        {show && (
+                            <div className="warning-max-teacher">Máximo de 3 horários por professor cadastrado</div>
+                        )}
                         {scheduleItems.map((scheduleItem, index) => {
                             return (
-                                <div key={scheduleItem.week_day} className="schedule-item">
+                                <div key={index} className="schedule-item">
                                     <Select
                                         required
                                         name="week_day"
@@ -217,3 +235,5 @@ export default function TeacherForm() {
         </div>
     )
 }
+
+export default TeacherForm;
